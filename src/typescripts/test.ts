@@ -7,15 +7,4 @@ getInter = function(a:string,b:string){
 	var result = a.search(b);
 	return result!==-1 ? true: false;
 	// 
-
 }
-console.log(getInter('handsome','han'));
-
-interface test{
-	(test:string):boolean
-}
-
-var tt = function(){
-	console.log('dd');
-}
-tt();

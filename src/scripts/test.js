@@ -4,8 +4,3 @@ getInter = function (a, b) {
     return result !== -1 ? true : false;
     // 
 };
-console.log(getInter('handsome', 'han'));
-var tt = function () {
-    console.log('dd');
-};
-tt();
