@@ -8,8 +8,10 @@ create by lam
 在dist文件夹会有压缩后的 .min.js文件
 
 
-#Less
-使用less  你不能找到 相应的css文件，但是在dist文件夹会有相应的压缩后的 .min.css文件
+// #Less
+// 使用less  你不能找到 相应的css文件，但是在dist文件夹会有相应的压缩后的 .min.css文件
+
+# 使用sass(scss) 构建css
 
 
 

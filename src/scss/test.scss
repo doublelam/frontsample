@@ -1,0 +1,35 @@
+body{
+    background: #eee;
+}
+
+@mixin test($color:black){
+    background-color: $color;
+}
+
+.test{
+    @include test(red);
+}
+.test2{
+    @include test();
+}
+$mrg-tp: margin-top;
+$mrg-bt: margin-bottom;
+
+.test1{
+    #{$mrg-tp}: 2px;
+    #{$mrg-bt}: 4px;
+    a{
+        color: red;
+        &:hover{
+            color: green;
+        }
+    }
+}
+
+@for $i from 1 through 12{
+    .grid-#{$i}{
+        float: left;
+        width: $i / 12 * 100%;
+    }
+}
+

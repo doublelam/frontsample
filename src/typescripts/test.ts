@@ -12,7 +12,7 @@ class GetElement implements FetchElement {
 		var eleTypeDes = eleName.substr(0,1);
 		this.element =  document.createElement('div');
 	}
-}
+} 
 
 const getElement = new GetElement('s');
 console.log(getElement.element);

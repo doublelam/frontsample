@@ -14,7 +14,7 @@ const footer = require('gulp-footer');
 const gulpif = require('gulp-if');
 const jshint = require('gulp-jshint');
 const less = require('gulp-less');
-const cssmin = require('gulp-minify-css');
+// const cssmin = require('gulp-minify-css');
 const notify = require('gulp-notify');
 const plumber = require('gulp-plumber');
 const rename = require('gulp-rename');
@@ -22,7 +22,8 @@ const replace = require('gulp-replace');
 const uglify = require('gulp-uglify');
 const sourcemaps = require('gulp-sourcemaps');
 const ts = require('gulp-typescript');
-
+const sass = require('gulp-sass');
+const livereload = require('gulp-livereload');
 const pkg = require('./package.json');
 var date = new Date();
 pkg.date = ('00' + (date.getMonth() + 1)).slice(-2) + '-' +
@@ -46,7 +47,8 @@ var paths = {
     scripts: [
         'src/scripts/**/*.js','src/scripts/*.js'
     ],
-    styles: 'src/styles/' + pkg.name + '.less',
+    less: 'src/less/' + pkg.name + '.less',
+    scss: 'src/scss/' + 'main' + '.scss',
     images: [
         'src/images/**/*.jpg',
         'src/images/**/*.gif',
@@ -67,7 +69,8 @@ var paths = {
     watchs: {
         typescripts:['src/typescripts/**/*.ts','src/typescripts/*.ts'],
         scripts: ['src/scripts/*.js','src/scripts/**/*.js'],
-        styles: ['src/styles/**/*.less','src/styles/*.less'],
+        scss: ['src/scss/**/*.scss','src/scss/*.scss'],
+        less: ['src/less/**/*.less','src/less/*.less'],
         dist: 'dist/**/*'
     }
 };
@@ -86,6 +89,9 @@ var options = {
     fileName: pkg.name,
     less: {
         compress: true
+    },
+    sass:{
+        outputStyle: 'uncompressed'
     },
     imagemin: {
         progressive: true
@@ -109,8 +115,8 @@ gulp.task('typescript',function(){
 });
 
 // Styles
-gulp.task('styles', function () {
-    gulp.src(paths.styles)
+gulp.task('less', function () {
+    gulp.src(paths.less)
         .pipe(plumber({
             errorHandler: notify.onError('Error: <%= error.message %>')
         }))
@@ -118,6 +124,21 @@ gulp.task('styles', function () {
         .pipe(less(options.less))
         // .pipe(less())
         // .pipe(cssmin())
+        .pipe(gulpif(toggle.autoprefix, autoprefixer(options.autoprefix)))
+        .pipe(rename(options.rename))
+        .pipe(footer(timestamp, {
+            pkg: pkg
+        }))
+        .pipe(gulpif(toggle.sourcemaps, sourcemaps.write(dests.maps)))
+        .pipe(gulp.dest(dests.styles));
+});
+gulp.task('sass', function () {
+    gulp.src(paths.scss)
+        .pipe(plumber({
+            errorHandler: notify.onError('Error: <%= error.message %>')
+        }))
+        .pipe(gulpif(toggle.sourcemaps, sourcemaps.init()))
+        .pipe(sass(options.sass).on('error', sass.logError))
         .pipe(gulpif(toggle.autoprefix, autoprefixer(options.autoprefix)))
         .pipe(rename(options.rename))
         .pipe(footer(timestamp, {
@@ -172,7 +193,7 @@ gulp.task('clean', function (cb) {
 
 // Build
 gulp.task('build', ['clean'], function () {
-    gulp.start('styles', 'scripts', 'images', 'coypFonts', 'copyLib');
+    gulp.start('less','sass', 'scripts', 'images', 'coypFonts', 'copyLib');
 });
 
 // Default
@@ -192,13 +213,15 @@ gulp.task('watch', function () {
     // .js files
     gulp.watch(paths.watchs.scripts, ['scripts']);
     // .less files
-    gulp.watch(paths.watchs.styles, ['styles']);
+    gulp.watch(paths.watchs.less, ['less']);
+    // .scss files
+    gulp.watch(paths.watchs.scss, ['sass']);
     // images files
     gulp.watch(paths.images, ['images']);
     // LiveReload server
-    // livereload.listen();
+    livereload.listen();
     // Watch any files in dist/, reload on change
-    // gulp.watch(paths.watchs.dist).on('change', livereload.changed);
+    gulp.watch(paths.watchs.dist).on('change', livereload.changed);
     // 刷新浏览器
 });
 
